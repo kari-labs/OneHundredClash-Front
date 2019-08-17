@@ -168,6 +168,7 @@ export default {
               `
             });
             handleJWTAuth(token);
+            this.$router.push('/game/')
           } catch (err) {
             handleInvalidLogin();
           }
