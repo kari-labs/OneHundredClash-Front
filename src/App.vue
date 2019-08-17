@@ -88,6 +88,7 @@
                 </v-form>
               </v-card-text>
               <v-card-actions>
+                <v-btn text color="primary">Create</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="login(username,password)">Login</v-btn>
               </v-card-actions>
