@@ -16,7 +16,7 @@
         }
       },
       {
-        "source": "/game/**",
+        "source": "/game{,/**}",
         "run": {
           "serviceId": "hundred-game",
           "region": "us-central1"
