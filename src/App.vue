@@ -95,7 +95,7 @@
               </v-card-actions>
             </v-card>
           </template>
-        <v-card class="elevation-12" height="100%">
+        <v-card class="elevation-12 fill-height">
           <v-toolbar
                  color="primary"
                   dark
@@ -196,6 +196,8 @@ var jwt = require('jsonwebtoken');
               )
             }`
           })
+          this.$store.state.userData = jwt.verify(token.data.login, "nicoleIsACutie");
+          console.log(this.$store.state.userData)
         }catch{
           this.text = "An account with that Username or Email is already in use";
           this.alert = true
