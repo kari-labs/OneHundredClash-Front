@@ -25,7 +25,7 @@ jobs:
           command: npm run build
       
       - run: |
-          npm i -g firebase-tools
+          npm i firebase-tools
           firebase deploy --token "${FIREBASE_TOKEN}"
 
 
