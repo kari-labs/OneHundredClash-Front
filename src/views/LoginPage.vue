@@ -168,7 +168,7 @@ export default {
               `
             });
             handleJWTAuth(token);
-            window.location.replace('https://hundred.kari.dev/game/')
+            window.location.replace("https://hundred.kari.dev/game/index.html");
           } catch (err) {
             handleInvalidLogin();
           }
