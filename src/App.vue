@@ -31,7 +31,7 @@
       clipped-left
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Game Jam</v-toolbar-title>
+      <v-toolbar-title>{{hello}}</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
@@ -51,7 +51,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>{{hello}}</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form>
@@ -60,6 +60,7 @@
                     name="login"
                     prepend-icon="person"
                     type="text"
+                    v-model="username"
                   ></v-text-field>
 
                   <v-text-field
@@ -68,12 +69,13 @@
                     name="password"
                     prepend-icon="lock"
                     type="password"
+                    v-model="password"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">Login</v-btn>
+                <v-btn color="primary" @click="login(username,password)">Login</v-btn>
               </v-card-actions>
             </v-card>
 
@@ -89,15 +91,46 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+var jwt = require('jsonwebtoken');
   export default {
     props: {
       source: String,
     },
     data: () => ({
+      username: "",
+      password: "",
       drawer: null,
     }),
     created () {
       this.$vuetify.theme.dark = true
     },
+    methods: { 
+      async login(username, password){
+        
+        const token = await this.$apollo.mutate({
+          mutation: gql`mutation{
+            login(
+              username: "${username}",
+              password: "${password}"
+            )
+          }`
+        })
+        const decode = jwt.verify(token.data.login, "nicoleIsACutie")
+        console.log(decode)
+        if(decode != null){
+          this.$store.state.userData = decode;
+          console.log(this.$store.state.userData)
+        }else{
+          console.log("Invalid Username or Password")
+        }
+        
+      },
+    },
+    apollo: {
+      hello: gql`query{
+        hello
+      }`,
+    }
   }
 </script>
