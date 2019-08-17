@@ -24,8 +24,7 @@ jobs:
           name: Build for Prod
           command: npm run build
       
-      - run: |
-          npm i firebase-tools
-          firebase deploy --token "${FIREBASE_TOKEN}"
-
+      - run:
+          name: Firebase Deploy
+          command: ./node_modules/.bin/firebase deploy --token "${FIREBASE_TOKEN}"
 
