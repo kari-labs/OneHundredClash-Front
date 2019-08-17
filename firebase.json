@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "hundred-game-d6aaf",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -7,6 +8,20 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/api/graphql",
+        "run": {
+          "serviceId": "hundred-game-backend",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/game{,/**}",
+        "run": {
+          "serviceId": "hundred-game",
+          "region": "us-central1"
+        }
+      },
       {
         "source": "**",
         "destination": "/index.html"
