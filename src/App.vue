@@ -6,6 +6,7 @@
       app
       clipped
     >
+    
       <v-list dense>
         <v-list-item>
           <v-list-item-action>
@@ -25,20 +26,33 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-
+    
     <v-app-bar
       app
       clipped-left
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{hello}}</v-toolbar-title>
+      <v-toolbar-title>{{nameOfTheGame}}</v-toolbar-title>
     </v-app-bar>
-
+  
     <v-content>
+      <v-snackbar
+        v-model="alert"
+        :bottom="y === 'bottom'"
+        :color="color"
+        :left="x === 'left'"
+        :multi-line="mode === 'multi-line'"
+        :right="x === 'right'"
+        :timeout="timeout"
+        :top="'top'"
+      >
+      Invalid Username or Password
+      </v-snackbar>
       <v-container
         class="fill-height"
         fluid
       >
+      
         <v-row
           align="center"
           justify="center"
@@ -51,7 +65,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>{{hello}}</v-toolbar-title>
+                <v-toolbar-title>Welcome</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form>
@@ -85,7 +99,7 @@
     </v-content>
 
     <v-footer app>
-
+      2019 Game Jam
     </v-footer>
   </v-app>
 </template>
@@ -98,17 +112,24 @@ var jwt = require('jsonwebtoken');
       source: String,
     },
     data: () => ({
+      color: 'error',
+      mode: 'vertical',
+      snackbar: false,
+      timeout: 6000,
+      x: null,
+      y: 'top',
       username: "",
       password: "",
       drawer: null,
+      alert: false,
     }),
     created () {
       this.$vuetify.theme.dark = true
     },
     methods: { 
       async login(username, password){
-        
-        const token = await this.$apollo.mutate({
+        try {
+          const token = await this.$apollo.mutate({
           mutation: gql`mutation{
             login(
               username: "${username}",
@@ -116,20 +137,17 @@ var jwt = require('jsonwebtoken');
             )
           }`
         })
-        const decode = jwt.verify(token.data.login, "nicoleIsACutie")
-        console.log(decode)
-        if(decode != null){
-          this.$store.state.userData = decode;
-          console.log(this.$store.state.userData)
-        }else{
-          console.log("Invalid Username or Password")
+        this.$store.state.userData = jwt.verify(token.data.login, "nicoleIsACutie");
+        console.log(this.$store.state.userData)
+        } catch (error) {
+          this.alert = true;
         }
         
       },
     },
     apollo: {
-      hello: gql`query{
-        hello
+      nameOfTheGame: gql`query{
+        nameOfTheGame
       }`,
     }
   }
