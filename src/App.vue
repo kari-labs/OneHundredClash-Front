@@ -46,7 +46,7 @@
         :timeout="timeout"
         :top="'top'"
       >
-      Invalid Username or Password
+      {{text}}
       </v-snackbar>
       <v-container
         class="fill-height"
@@ -58,50 +58,101 @@
           justify="center"
         >
           <v-col>
-            
-            <v-card class="elevation-12">
-              <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
-                <v-toolbar-title>Welcome</v-toolbar-title>
-              </v-toolbar>
-              <v-card-text>
-                <v-form>
-                  <v-text-field
-                    label="Login"
-                    name="login"
-                    prepend-icon="person"
-                    type="text"
-                    v-model="username"
-                  ></v-text-field>
+            <v-menu transition="slide-x-transition">
+              <template v-slot:activator="{on}">
+                <v-card class="elevation-12">
+                <v-toolbar
+                 color="primary"
+                  dark
+                  flat
+                >
+                  <v-toolbar-title>Welcome</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text>
+                  <v-form>
+                    <v-text-field
+                      label="Login"
+                      name="login"
+                     prepend-icon="person"
+                      type="text"
+                      v-model="username"
+                    ></v-text-field>
 
-                  <v-text-field
-                    id="password"
-                    label="Password"
-                    name="password"
-                    prepend-icon="lock"
-                    type="password"
-                    v-model="password"
-                  ></v-text-field>
-                </v-form>
-              </v-card-text>
+                    <v-text-field
+                      id="password"
+                      label="Password"
+                      name="password"
+                      prepend-icon="lock"
+                      type="password"
+                      v-model="password"
+                    ></v-text-field>
+                  </v-form>
+                </v-card-text>
               <v-card-actions>
-                <v-btn text color="primary">Create</v-btn>
+                <v-btn text color="primary" class="ma-2" v-on="on">Create</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="login(username,password)">Login</v-btn>
               </v-card-actions>
             </v-card>
+          </template>
+        <v-card class="elevation-12" height="100%">
+          <v-toolbar
+                 color="primary"
+                  dark
+                  flat
+                >
+          <v-toolbar-title>Create User</v-toolbar-title>
+          </v-toolbar>
+            <v-card-text>
+              <v-form>
+                <v-text-field
+                      label="First Name"
+                      name="first"
+                      type="text"
+                      v-model="first"
+                    ></v-text-field>
 
-          </v-col>
-        </v-row>
-      </v-container>
+                    <v-text-field
+                      label="Last Name"
+                      name="last"
+                      type="text"
+                      v-model="last"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Username"
+                      name="last"
+                      type="text"
+                      v-model="username"
+                    ></v-text-field>
+                    <v-text-field
+                      id="password"
+                      label="Password"
+                      name="password"
+                      type="password"
+                      v-model="password"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Email"
+                      name="email"
+                      type="text"
+                      v-model="email"
+                      >
+                    </v-text-field>
+              </v-form>
+            </v-card-text>
+          <v-card-actions>
+            <v-btn text>Close</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn @click="create()" color="primary">Create</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+            
+
+    </v-col>
+  </v-row>
+</v-container>
     </v-content>
-
-    <v-footer app>
-      2019 Game Jam
-    </v-footer>
   </v-app>
 </template>
 
@@ -113,6 +164,10 @@ var jwt = require('jsonwebtoken');
       source: String,
     },
     data: () => ({
+      email: '',
+      first: '',
+      last: '',
+      text: '',
       color: 'error',
       mode: 'vertical',
       snackbar: false,
@@ -128,6 +183,24 @@ var jwt = require('jsonwebtoken');
       this.$vuetify.theme.dark = true
     },
     methods: { 
+      async create(first, last, username, password, email){
+        try{
+          const token = await this.$apollo.mutate({
+            mutate: gql`mutation{
+              register(
+                first: "${first}",
+                last: "${last}",
+                username: "${username}",
+                password: "${password}",
+                email: "${email}"
+              )
+            }`
+          })
+        }catch{
+          this.text = "An account with that Username or Email is already in use";
+          this.alert = true
+        }
+      },
       async login(username, password){
         try {
           const token = await this.$apollo.mutate({
@@ -141,6 +214,7 @@ var jwt = require('jsonwebtoken');
         this.$store.state.userData = jwt.verify(token.data.login, "nicoleIsACutie");
         console.log(this.$store.state.userData)
         } catch (error) {
+          this.text = "Invalid Username or Password"
           this.alert = true;
         }
         
