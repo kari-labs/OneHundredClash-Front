@@ -58,8 +58,7 @@
           justify="center"
         >
           <v-col>
-            <v-menu transition="slide-x-transition">
-              <template v-slot:activator="{on}">
+            
                 <v-card class="elevation-12">
                 <v-toolbar
                  color="primary"
@@ -89,12 +88,16 @@
                   </v-form>
                 </v-card-text>
               <v-card-actions>
-                <v-btn text color="primary" class="ma-2" v-on="on">Create</v-btn>
+                <v-btn text color="primary" class="ma-2" @click="overlay = true">Create</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="login(username,password)">Login</v-btn>
               </v-card-actions>
             </v-card>
-          </template>
+            <v-overlay
+            :absolute="absolute"
+            :opacity="opacity"
+            :value="overlay"
+            >
         <v-card class="elevation-12 fill-height">
           <v-toolbar
                  color="primary"
@@ -141,13 +144,12 @@
               </v-form>
             </v-card-text>
           <v-card-actions>
-            <v-btn text>Close</v-btn>
+            <v-btn text @click="overlay=false">Close</v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="create()" color="primary">Create</v-btn>
+            <v-btn @click="create(first,last,username,password,email)" color="primary">Create</v-btn>
           </v-card-actions>
         </v-card>
-      </v-menu>
-            
+            </v-overlay>
 
     </v-col>
   </v-row>
@@ -164,6 +166,9 @@ var jwt = require('jsonwebtoken');
       source: String,
     },
     data: () => ({
+      absolute: true,
+      opacity: 1,
+      overlay: false,
       email: '',
       first: '',
       last: '',
@@ -186,7 +191,7 @@ var jwt = require('jsonwebtoken');
       async create(first, last, username, password, email){
         try{
           const token = await this.$apollo.mutate({
-            mutate: gql`mutation{
+            mutation: gql`mutation{
               register(
                 first: "${first}",
                 last: "${last}",
@@ -196,9 +201,16 @@ var jwt = require('jsonwebtoken');
               )
             }`
           })
-          this.$store.state.userData = jwt.verify(token.data.login, "nicoleIsACutie");
+          localStorage.setItem('JWT', token.data.register)
+          this.$store.state.userData = jwt.verify(token.data.register, "nicoleIsACutie");
           console.log(this.$store.state.userData)
-        }catch{
+          this.overlay = false
+          this.text = "Success"
+          this.color = "success"
+          this.alert = true
+
+        }catch(error){
+          console.log(error)
           this.text = "An account with that Username or Email is already in use";
           this.alert = true
         }
@@ -213,8 +225,13 @@ var jwt = require('jsonwebtoken');
             )
           }`
         })
+        localStorage.setItem('JWT', token.data.login);
         this.$store.state.userData = jwt.verify(token.data.login, "nicoleIsACutie");
         console.log(this.$store.state.userData)
+        this.overlay = false
+          this.text = "Success"
+          this.color = "success"
+          this.alert = true
         } catch (error) {
           this.text = "Invalid Username or Password"
           this.alert = true;
