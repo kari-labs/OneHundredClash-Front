@@ -3,6 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import { createProvider } from './vue-apollo';
 import Vuex from 'vuex';
+import router from "@/router";
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
@@ -24,6 +25,7 @@ const store = new Vuex.Store({
 new Vue({
   vuetify,
   store,
+  router,
   apolloProvider: createProvider(),
   render: h => h(App)
 }).$mount('#app')
