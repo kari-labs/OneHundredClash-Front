@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "hundred-game-d6aaf",
     "public": "dist",
     "ignore": [
       "firebase.json",
