@@ -168,7 +168,7 @@ export default {
               `
             });
             handleJWTAuth(token);
-            this.$router.push('https://hundred.kari.dev/game/')
+            window.location.replace('https://hundred.kari.dev/game/')
           } catch (err) {
             handleInvalidLogin();
           }
