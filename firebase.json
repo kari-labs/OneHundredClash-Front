@@ -16,6 +16,13 @@
         }
       },
       {
+        "source": "/game",
+        "run": {
+          "serviceId": "hundred-game",
+          "region": "us-central1"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
