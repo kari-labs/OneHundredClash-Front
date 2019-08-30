@@ -139,7 +139,7 @@ export default {
 
       const handleJWTAuth = token => {
         localStorage.setItem("JWT", token.data.login);
-        this.$store.state.userData = jwt.verify(token.data.login);
+        this.$store.state.userData = jwt.decode(token.data.login);
         this.overlay = false;
         this.text = "Success";
         this.color = "success";
