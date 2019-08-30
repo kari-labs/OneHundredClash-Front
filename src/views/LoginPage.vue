@@ -120,10 +120,7 @@ export default {
             }`
         });
         localStorage.setItem("JWT", token.data.register);
-        this.$store.state.userData = jwt.verify(
-          token.data.register,
-          "nicoleIsACutie"
-        );
+        this.$store.state.userData = jwt.decode(token.data.register);
         this.overlay = false;
         this.text = "Success";
         this.color = "success";
@@ -142,10 +139,7 @@ export default {
 
       const handleJWTAuth = token => {
         localStorage.setItem("JWT", token.data.login);
-        this.$store.state.userData = jwt.verify(
-          token.data.login,
-          "nicoleIsACutie"
-        );
+        this.$store.state.userData = jwt.verify(token.data.login);
         this.overlay = false;
         this.text = "Success";
         this.color = "success";
